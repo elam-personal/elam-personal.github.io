@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>Google+ Image Gallery </title>
+        <link rel="stylesheet" href="./js/jqwidgets/styles/jqx.base.css" type="text/css" />
+        <link rel="stylesheet" href="./js/jqwidgets/styles/jqx.black.css" type="text/css" />
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    	<script type="text/javascript" src="./js/jquery-1.11.0.min.js"></script>
+    	<script type="text/javascript" src="./js/jqwidgets/jqxcore.js"></script>
+    	<script type="text/javascript" src="./js/jqwidgets/jqxbuttons.js"></script>
+   	 	<script type="text/javascript" src="./js/jqwidgets/jqxscrollbar.js"></script>
+    	<script type="text/javascript" src="./js/jqwidgets/jqxlistbox.js"></script>
+     
+        <script type="text/javascript">   
+      	   	google.load('visualization', '1', {'packages':['corechart']});
+    		google.setOnLoadCallback(getTrainingPlan);
+    		
+    		var weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    		var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        
+        	var ssKey = "1BgpxTek3FKSBiX01_YYrg-MgqrHBDDpSu3K1oFiVvKY";
+        	var gurl = "https://docs.google.com/spreadsheets/d/" + ssKey + "/gviz/tq";
+        	
+        	function getTrainingPlan() {
+        		var opts = {sendMethod: 'auto'};
+ 	 			var query = new google.visualization.Query(gurl, opts);
+  				query.setQuery("select * where A > date '2015-07-11'");
+  				query.send(handleQueryResponse);
+  			}
+  			
+  			function handleQueryResponse(response) {
+  				if (response.isError()) {
+   					console.error('Problem getting training plan ' + response.getMessage() + ' ' + response.getDetailedMessage());
+    				return;
+  				} else {	
+  					var data = response.getDataTable();
+  					printTableData(data);
+  				}
+			}
+			
+			function printTableData(dataTable) {
+				var rowCount = dataTable.getNumberOfRows();
+				var values = [];
+				for (var i = 0; i < rowCount; i++) {
+					values[i] = 
+					getDateString(dataTable.getValue(i,0)) + ", " +
+					dataTable.getValue(i,3) + ", " +
+					dataTable.getValue(i,4) + " <br>" +
+					dataTable.getValue(i,2);
+				}
+				populateListBox (values);
+				//document.body.innerHTML = values;
+			}
+			
+			function getDateString(dateVal) {
+				return weekday[dateVal.getDay()] + " " +
+						month[dateVal.getMonth()] + " " +
+						dateVal.getDate();
+			}
+			
+			function populateListBox(source) {
+				$("#jqxWidget").jqxListBox({ selectedIndex: 0, source: source, width: 400, height: 250});
+			}
+			
+			function getType(thing){
+ 			   if(thing===null)return "[object Null]"; // special case
+ 			   return Object.prototype.toString.call(thing);
+			}
+        	  
+        	
+        </script>
+    </head> 
+    <body>
+    <div id='jqxWidget'>
+        </div>
+    
+    </body>
+</html>
